@@ -1,7 +1,5 @@
 (in-package #:coalton-docgen)
 
-;;(declaim (optimize (debug 3)))
-
 (defvar *format* :markdown
   "Set either `:markdown' or `:html' to choose output format.")
 
@@ -46,6 +44,16 @@
         (when (exportedp sym)
           (push (cons sym entry) classes))))
     classes))
+
+(defun package-instances (package)
+  "List of instances implemented in `package'. (UNUSED)"
+  (let ((instances '()))
+    (fset:do-map (sym entry (algo:immutable-map-data
+                             (tc:environment-class-environment
+                              entry:*global-environment*)))
+      (when (eql (find-package package) (symbol-package sym))
+        (push (cons sym entry) instances)))
+    instances))
 
 (defun package-methods (package)
   "List of exported methods in `package'."
@@ -129,18 +137,6 @@ minus ones that are methods or types."
       ,@(mapcar (lambda (pair) (format-class (car pair) (cdr pair)))
                 classes))))
 
-;; (defun format-instance (entry)
-;;   `(:<>))
-
-;; (defun format-instance-db (package)
-;;   (let ((instances '()))
-;;     (fset:do-map (sym entry (algo:immutable-map-data
-;;                              (tc:environment-class-environment
-;;                               entry:*global-environment*)))
-;;       (when (eql (find-package package) (symbol-package sym))
-;;         (push entry classes)))
-;;     `(:<> ,@(mapcar #'format-class classes))))
-
 (defun format-value (sym entry)
   `(:<>
     (:h3 ,(format nil "~a :: " (sanitize sym))
@@ -155,6 +151,7 @@ minus ones that are methods or types."
                 values))))
 
 (defun format-docs (package)
+  "Format documentation for a package into renderable s-expressions."
   `(:<>
     (:h1 ,package)
     ,@(remove-if-not
@@ -165,4 +162,6 @@ minus ones that are methods or types."
         (format-value-db package)))))
 
 (defun render-docs (out package)
+  "Render documentation for `package' to `out' stream, in the format
+specified by `coalton-docgen:*format*'."
   (render out (format-docs package)))
