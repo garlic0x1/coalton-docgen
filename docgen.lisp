@@ -33,6 +33,7 @@
                 :limit 2)) )
 
 (defun exportedp (sym)
+  "Check if a symbol is exported from its package."
   (eq :external (nth-value 1 (find-symbol (symbol-name sym) (symbol-package sym)))))
 
 (defun package-classes (package)

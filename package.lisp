@@ -6,4 +6,7 @@
    (#:entry #:coalton-impl/entry)
    (#:algo #:coalton-impl/algorithm)
    (#:env #:coalton-impl/typechecker/environment)
-   (#:source #:coalton-impl/source)))
+   (#:source #:coalton-impl/source))
+  (:export
+   #:*format*
+   #:render-docs))
