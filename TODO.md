@@ -1,0 +1,2 @@
+- Make format-class-db not suck (DONE)
+- Implement format-instance-db
